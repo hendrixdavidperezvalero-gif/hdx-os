@@ -1,0 +1,593 @@
+<title>HDX OS — UI Kit</title>
+<style>
+  :root{
+    /* doc chrome */
+    --bg:#f1f2ee; --surface:#ffffff; --surface-2:#e8eae3; --border:#dbded5; --border-strong:#c4c9bc;
+    --ink:#1a1d19; --ink-soft:#565c52; --ink-faint:#878d80;
+    --accent:#a82c29; --accent-soft:#a82c2914;
+    /* app skin (paper) — light */
+    --app-bg:#f8f9f6; --app-surface:#ffffff; --app-2:#eceee9; --app-panel:#181b17;
+    --app-ink:#181b18; --app-soft:#535a51; --app-faint:#868d83;
+    --app-border:#e4e7e0; --app-border2:#dcdfd8;
+    --app-accent:#a82c29; --app-accent-soft:#a82c290f; --app-accent-line:#a82c2926;
+    --app-done:#5c7a58; --app-warn:#b07d16;
+    --shadow:0 1px 2px rgba(26,29,25,.05),0 10px 28px -14px rgba(26,29,25,.2);
+    --mono:'Cascadia Code','Cascadia Mono',ui-monospace,'Segoe UI Mono',Consolas,'Roboto Mono',monospace;
+    --sans:system-ui,'Segoe UI Variable Text','Segoe UI',-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    --h2:clamp(1.35rem,2.7vw,1.85rem);
+    --maxw:1120px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0f110e; --surface:#171a15; --surface-2:#1e211b; --border:#2b2f28; --border-strong:#3b4238;
+      --ink:#e9ebe6; --ink-soft:#a6ada2; --ink-faint:#767d72; --accent:#e2564f; --accent-soft:#e2564f1a;
+      --app-bg:#181b17; --app-surface:#20241e; --app-2:#262b23; --app-panel:#0b0d0a;
+      --app-ink:#e9ebe6; --app-soft:#a6ada2; --app-faint:#767d72;
+      --app-border:#2c312a; --app-border2:#3d443b;
+      --app-accent:#e2564f; --app-accent-soft:#e2564f14; --app-accent-line:#e2564f33;
+      --app-done:#7fa578; --app-warn:#e6b64c;
+      --shadow:0 1px 2px rgba(0,0,0,.5),0 14px 34px -16px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#f1f2ee; --surface:#ffffff; --surface-2:#e8eae3; --border:#dbded5; --border-strong:#c4c9bc;
+    --ink:#1a1d19; --ink-soft:#565c52; --ink-faint:#878d80; --accent:#a82c29; --accent-soft:#a82c2914;
+    --app-bg:#f8f9f6; --app-surface:#ffffff; --app-2:#eceee9; --app-panel:#181b17;
+    --app-ink:#181b18; --app-soft:#535a51; --app-faint:#868d83; --app-border:#e4e7e0; --app-border2:#dcdfd8;
+    --app-accent:#a82c29; --app-accent-soft:#a82c290f; --app-accent-line:#a82c2926; --app-done:#5c7a58; --app-warn:#b07d16;
+    --shadow:0 1px 2px rgba(26,29,25,.05),0 10px 28px -14px rgba(26,29,25,.2);
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f110e; --surface:#171a15; --surface-2:#1e211b; --border:#2b2f28; --border-strong:#3b4238;
+    --ink:#e9ebe6; --ink-soft:#a6ada2; --ink-faint:#767d72; --accent:#e2564f; --accent-soft:#e2564f1a;
+    --app-bg:#181b17; --app-surface:#20241e; --app-2:#262b23; --app-panel:#0b0d0a;
+    --app-ink:#e9ebe6; --app-soft:#a6ada2; --app-faint:#767d72; --app-border:#2c312a; --app-border2:#3d443b;
+    --app-accent:#e2564f; --app-accent-soft:#e2564f14; --app-accent-line:#e2564f33; --app-done:#7fa578; --app-warn:#e6b64c;
+    --shadow:0 1px 2px rgba(0,0,0,.5),0 14px 34px -16px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:clamp(18px,4vw,36px)}
+  section{padding-block:clamp(38px,5vw,64px)}
+  h1,h2,h3,h4{margin:0;line-height:1.14;text-wrap:balance}
+  p{margin:0}
+  code{font-family:var(--mono)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  .sec-h{border-bottom:1px solid var(--border-strong);padding-bottom:12px;margin-bottom:26px}
+  .sec-h h2{font-family:var(--mono);font-size:var(--h2);font-weight:700;letter-spacing:-.02em;margin-top:8px}
+  .sec-h p{margin-top:9px;color:var(--ink-soft);font-size:.98rem;max-width:70ch}
+
+  /* nav */
+  .nav{position:sticky;top:0;z-index:30;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    background:color-mix(in srgb,var(--bg) 86%,transparent);border-bottom:1px solid var(--border)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;padding-block:12px}
+  .mark{font-family:var(--mono);font-weight:700;font-size:.98rem}
+  .mark .c{color:var(--accent)}
+  .nav .links{display:flex;gap:20px;font-family:var(--mono);font-size:.73rem;letter-spacing:.04em;
+    text-transform:uppercase;color:var(--ink-soft)}
+  .nav .links a{text-decoration:none}.nav .links a:hover{color:var(--accent)}
+  @media(max-width:720px){.nav .links{display:none}}
+
+  .hero{padding-top:44px;padding-bottom:8px}
+  .hero h1{font-family:var(--mono);font-size:clamp(1.8rem,4.5vw,3rem);font-weight:700;letter-spacing:-.03em;margin-top:14px}
+  .hero p{margin-top:16px;color:var(--ink-soft);font-size:1.06rem;max-width:60ch}
+  .metastrip{margin-top:20px;display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-family:var(--mono);font-size:.72rem;padding:5px 10px;border:1px solid var(--border-strong);border-radius:6px;color:var(--ink-soft);background:var(--surface)}
+
+  /* foundations */
+  .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .sw{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}
+  .sw .b{height:64px}
+  .sw .t{padding:9px 11px}
+  .sw .nm{font-weight:700;font-size:.86rem}
+  .sw .hx{font-family:var(--mono);font-size:.72rem;color:var(--ink-soft);margin-top:2px}
+  .sw .hx .d{color:var(--ink-faint)}
+
+  .found-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:22px;margin-top:8px}
+  @media(max-width:820px){.found-grid{grid-template-columns:1fr}}
+  .panel{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:20px;box-shadow:var(--shadow)}
+  .panel h3{font-size:1.02rem;font-weight:700;margin-bottom:4px}
+  .panel .cap{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+  .typerow{display:flex;align-items:baseline;gap:14px;padding:9px 0;border-top:1px solid var(--border)}
+  .typerow:first-of-type{border-top:none}
+  .typerow .lab{font-family:var(--mono);font-size:.66rem;color:var(--ink-faint);width:92px;flex:none}
+  .scale-mono{font-family:var(--mono)} .scale-sans{font-family:var(--sans)}
+  .tokline{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--border);font-size:.9rem}
+  .tokline:first-of-type{border-top:none}
+  .tokline .v{font-family:var(--mono);font-size:.8rem;color:var(--ink-soft)}
+  .radii{display:flex;gap:12px;align-items:flex-end;margin-top:8px}
+  .radii div{background:var(--app-accent-soft);border:1px solid var(--app-accent-line);width:52px;height:44px}
+  .radii .r1{border-radius:5px}.radii .r2{border-radius:8px}.radii .r3{border-radius:11px}.radii .r4{border-radius:28px}
+  .radii span{font-family:var(--mono);font-size:.62rem;color:var(--ink-faint);display:block;text-align:center;margin-top:5px}
+
+  /* component gallery */
+  .kit{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+  .comp{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow);display:flex;flex-direction:column}
+  .comp.w2{grid-column:span 2}
+  @media(max-width:640px){.comp.w2{grid-column:span 1}}
+  .comp .ch{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 13px;border-bottom:1px solid var(--border);background:var(--surface-2)}
+  .comp .ch .nm{font-weight:700;font-size:.85rem}
+  .comp .ch .tg{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);border:1px solid var(--border-strong);border-radius:5px;padding:2px 6px}
+  .canvas{padding:18px 15px;background:var(--app-bg);flex:1;display:flex;flex-direction:column;justify-content:center;gap:9px}
+  .comp .note{padding:10px 13px;border-top:1px dashed var(--border-strong);font-size:.78rem;color:var(--ink-soft)}
+  .comp .note code{font-size:.9em;color:var(--ink)}
+
+  /* --- app components (rendered in .canvas) --- */
+  .a-bar{display:flex;align-items:center;gap:9px;font-family:var(--mono);color:var(--app-ink)}
+  .a-bar .m{font-weight:700;font-size:12.5px}.a-bar .m .c{color:var(--app-accent)}
+  .a-bar .dt{margin-left:auto;font-size:10px;color:var(--app-faint)}
+  .a-greet{font-weight:700;font-size:16px;color:var(--app-ink)}
+  .a-greet .s{display:block;font-weight:400;font-size:11px;color:var(--app-faint);margin-top:2px}
+  .a-btns{display:flex;gap:6px;flex-wrap:wrap}
+  .a-btn{font-family:var(--mono);font-size:11px;padding:8px 12px;border-radius:8px;border:1px solid var(--app-border2);color:var(--app-soft);background:var(--app-surface)}
+  .a-btn.pri{background:var(--app-accent);border-color:var(--app-accent);color:#fff;font-weight:600}
+  .a-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--app-faint)}
+  .a-card{background:var(--app-surface);border:1px solid var(--app-border);border-radius:11px;padding:12px}
+  .a-mt .r{display:flex;gap:8px;font-size:12.5px;padding:2px 0;color:var(--app-ink)}
+  .a-mt .r .k{font-family:var(--mono);font-size:10px;color:var(--app-faint);width:56px;flex:none}
+  .a-mt .r .v{font-weight:600}.a-mt .r .v.ph{color:var(--app-faint);font-weight:400;opacity:.7}
+  .a-mood{display:flex;align-items:center;gap:6px}
+  .a-mood .k{font-family:var(--mono);font-size:10px;color:var(--app-faint)}
+  .a-dots{display:flex;gap:3px;margin-left:auto}
+  .a-dots i{width:9px;height:9px;border-radius:50%;background:var(--app-2);border:1px solid var(--app-border)}
+  .a-dots i.on{background:var(--app-accent);border-color:var(--app-accent)}
+  .a-tile{text-align:left;background:var(--app-surface);border:1px solid var(--app-border);border-radius:10px;padding:11px;color:var(--app-ink)}
+  .a-tile .tt{font-size:12px;font-weight:700}
+  .a-tile .pb{height:5px;border-radius:99px;background:var(--app-2);margin:8px 0 5px;overflow:hidden}
+  .a-tile .pb i{display:block;height:100%;background:var(--app-accent)}
+  .a-tile .st{font-family:var(--mono);font-size:10px;color:var(--app-done)}
+  .a-tile .nx{font-size:11px;color:var(--app-soft);margin-top:3px}
+  .a-tile.warn{border-color:var(--app-warn)}.a-tile.warn .pb i{background:var(--app-warn)}.a-tile.warn .st{color:var(--app-warn)}
+  .a-prog{height:8px;border-radius:99px;background:var(--app-2);overflow:hidden;border:1px solid var(--app-border)}
+  .a-prog i{display:block;height:100%;background:var(--app-accent)}
+  .a-step{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--app-ink);padding:5px 0}
+  .a-cb{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--app-border2);flex:none;margin-top:1px;position:relative}
+  .a-cb.on{background:var(--app-done);border-color:var(--app-done)}
+  .a-cb.on::after{content:"";position:absolute;left:4.5px;top:1.5px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .a-cb.now{border-color:var(--app-accent)}
+  .a-step.done .sx{color:var(--app-faint);text-decoration:line-through}
+  .a-step.now .sx{font-weight:700}
+  .a-hab{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--app-soft)}
+  .a-sq{display:flex;gap:3px;margin-left:auto}
+  .a-sq i{width:12px;height:12px;border-radius:3px;background:var(--app-2);border:1px solid var(--app-border)}
+  .a-sq i.on{background:var(--app-done);border-color:var(--app-done)}
+  .a-mentor{padding:11px;border-radius:11px;background:var(--app-accent-soft);border:1px solid var(--app-accent-line);display:flex;align-items:center;gap:9px}
+  .a-mentor .ic{width:24px;height:24px;border-radius:50%;background:var(--app-accent);color:#fff;display:grid;place-items:center;font-family:var(--mono);font-size:12px;flex:none}
+  .a-mentor .tx{font-size:11px;color:var(--app-accent)}
+  .a-chips{display:flex;gap:6px;flex-wrap:wrap}
+  .a-chip{font-family:var(--mono);font-size:11px;padding:7px 10px;border-radius:8px;background:var(--app-2);color:var(--app-soft);border:1px solid var(--app-border2)}
+  .a-field{padding:13px;border-radius:11px;background:var(--app-surface);border:1px solid var(--app-border2);color:var(--app-faint);font-size:13px;min-height:64px}
+  .a-microw{display:flex;align-items:center;gap:9px}
+  .a-mic{width:38px;height:38px;border-radius:50%;background:var(--app-accent);color:#fff;border:0;display:grid;place-items:center;flex:none}
+  .a-mic svg{width:18px;height:18px}
+  .a-wave{display:flex;align-items:center;gap:3px;height:20px}
+  .a-wave i{width:3px;border-radius:2px;background:var(--app-accent);opacity:.7}
+  .a-tc{display:flex;gap:6px;flex-wrap:wrap}
+  .a-tc span{font-family:var(--mono);font-size:11px;padding:6px 11px;border-radius:999px;border:1px dashed var(--app-border2);color:var(--app-soft)}
+  .a-tc span.sel{background:var(--app-accent);color:#fff;border-style:solid;border-color:var(--app-accent)}
+  .a-save{padding:11px;border-radius:9px;background:var(--app-panel);color:#f4f5f2;border:0;font-family:var(--mono);font-weight:600;font-size:12.5px;text-align:center}
+  .a-seg{display:inline-flex;gap:3px;padding:3px;border-radius:999px;background:var(--app-2);border:1px solid var(--app-border);align-self:flex-start}
+  .a-seg b{font-family:var(--mono);font-size:11px;font-weight:400;padding:6px 12px;border-radius:999px;color:var(--app-soft)}
+  .a-seg b.sel{background:var(--app-accent);color:#fff;font-weight:600}
+  .a-note{padding:10px 12px;border-radius:9px;background:var(--app-2);border:1px solid var(--app-border);font-size:11.5px;color:var(--app-soft)}
+  .a-empty{text-align:center;color:var(--app-faint);font-size:12px;padding:8px}
+  .a-empty .big{font-family:var(--mono);font-size:22px;color:var(--app-border2);display:block;margin-bottom:6px}
+
+  /* UX patterns */
+  .ux-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:820px){.ux-grid{grid-template-columns:1fr}}
+  .ux{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:20px;box-shadow:var(--shadow)}
+  .ux h3{font-size:1.04rem;font-weight:700}
+  .ux .cap{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .ux p{color:var(--ink-soft);font-size:.92rem;margin-top:8px}
+  .ux ul{margin:10px 0 0;padding-left:18px;color:var(--ink-soft);font-size:.9rem}
+  .ux li{margin-bottom:5px}
+  .legend{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+  .lg{display:flex;align-items:center;gap:10px;font-size:.9rem}
+  .lg .dot{width:13px;height:13px;border-radius:4px;flex:none}
+  .navmap{font-family:var(--mono);font-size:.78rem;color:var(--ink-soft);white-space:pre;overflow-x:auto;line-height:1.7;margin:6px 0 0}
+  .navmap b{color:var(--accent)}
+  .dodont{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+  @media(max-width:640px){.dodont{grid-template-columns:1fr}}
+  .dd{border:1px solid var(--border);border-radius:10px;padding:15px;background:var(--surface)}
+  .dd .h{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+  .dd.do .h{color:var(--app-done)}.dd.dont .h{color:var(--accent)}
+  .dd ul{margin:9px 0 0;padding-left:17px;font-size:.88rem;color:var(--ink-soft)}
+  .dd li{margin-bottom:5px}
+
+  /* flows as sequences */
+  .flows{display:flex;flex-direction:column;gap:26px}
+  .flow-block{}
+  .flow-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .flow-head .n{font-family:var(--mono);font-size:.8rem;font-weight:700;color:var(--accent);letter-spacing:.02em}
+  .flow-head .d{color:var(--ink-soft);font-size:.86rem}
+  .flow-head .badge{font-family:var(--mono);font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;border:1px solid var(--border-strong);color:var(--ink-faint)}
+  .flow-seq{display:flex;align-items:stretch;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+  .flow-seq::-webkit-scrollbar{height:6px}
+  .flow-seq::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:99px}
+  .fstep{flex:0 0 auto;width:156px;background:var(--surface);border:1px solid var(--border);border-radius:10px;
+    padding:12px;box-shadow:var(--shadow)}
+  .fstep .fn{font-family:var(--mono);font-size:.68rem;font-weight:700;color:var(--accent)}
+  .fstep .ft{font-weight:700;font-size:.9rem;margin-top:5px;line-height:1.2}
+  .fstep .fs{color:var(--ink-soft);font-size:.79rem;margin-top:4px;line-height:1.35}
+  .fstep.pri{border-color:var(--accent);background:var(--accent-soft)}
+  .fstep.end{border-style:dashed}
+  .farrow{flex:0 0 auto;display:grid;place-items:center;padding:0 5px;color:var(--ink-faint)}
+  .farrow svg{width:20px;height:20px}
+  .flow-behind{margin-top:9px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-family:var(--mono);
+    font-size:.76rem;color:var(--ink-faint);padding:9px 12px;border-radius:9px;background:var(--surface-2);border:1px dashed var(--border-strong)}
+  .flow-behind b{color:var(--accent)}
+  .cycle-note{margin-top:9px;font-family:var(--mono);font-size:.76rem;color:var(--accent);display:flex;align-items:center;gap:6px}
+
+  footer{border-top:1px solid var(--border);padding-block:26px;text-align:center;font-family:var(--mono);font-size:.72rem;color:var(--ink-faint)}
+</style>
+
+<nav class="nav">
+  <div class="wrap">
+    <span class="mark">hdx_os<span class="c">▍</span> / ui-kit</span>
+    <div class="links">
+      <a href="#fund">Fundamentos</a>
+      <a href="#comp">Componentes</a>
+      <a href="#ux">Patrones UX</a>
+      <a href="#flujos">Flujos</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <span class="eyebrow">Sistema de diseño · fuente de verdad</span>
+  <h1>UI Kit del HDX&nbsp;OS</h1>
+  <p>Los fundamentos, los componentes y los patrones de UX desde los que se construye la app. Piel de papel, no dark-neón: la tipografía monoespaciada <em>es</em> el markdown, y hay un solo acento — el rojo tinta con el que marcas la página.</p>
+  <div class="metastrip">
+    <span class="chip">Mobile-first · PWA</span>
+    <span class="chip">2 familias: mono + sans</span>
+    <span class="chip">1 acento</span>
+    <span class="chip">Claro + oscuro</span>
+  </div>
+</header>
+
+<!-- FUNDAMENTOS -->
+<section id="fund"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">01 · Fundamentos</span><h2>Color, tipografía y forma</h2>
+    <p>Los tokens de abajo son la app, no el documento. Cambian entre claro y oscuro. Todo componente los usa; nada usa un color suelto.</p></div>
+
+  <h3 style="font-size:.95rem;margin-bottom:12px;font-family:var(--mono);letter-spacing:.02em">Paleta</h3>
+  <div class="swatches">
+    <div class="sw"><div class="b" style="background:#f8f9f6"></div><div class="t"><div class="nm">Papel</div><div class="hx">#f8f9f6 <span class="d">/ #181b17</span></div></div></div>
+    <div class="sw"><div class="b" style="background:#ffffff;border-bottom:1px solid #e4e7e0"></div><div class="t"><div class="nm">Superficie</div><div class="hx">#ffffff <span class="d">/ #20241e</span></div></div></div>
+    <div class="sw"><div class="b" style="background:#181b18"></div><div class="t"><div class="nm">Tinta</div><div class="hx">#181b18 <span class="d">/ #e9ebe6</span></div></div></div>
+    <div class="sw"><div class="b" style="background:#535a51"></div><div class="t"><div class="nm">Tinta suave</div><div class="hx">#535a51 <span class="d">/ #a6ada2</span></div></div></div>
+    <div class="sw"><div class="b" style="background:#a82c29"></div><div class="t"><div class="nm">Acento · rojo tinta</div><div class="hx">#a82c29 <span class="d">/ #e2564f</span></div></div></div>
+    <div class="sw"><div class="b" style="background:#5c7a58"></div><div class="t"><div class="nm">Hecho · verde</div><div class="hx">#5c7a58 <span class="d">/ #7fa578</span></div></div></div>
+    <div class="sw"><div class="b" style="background:#b07d16"></div><div class="t"><div class="nm">Alerta · ámbar</div><div class="hx">#b07d16 <span class="d">/ #e6b64c</span></div></div></div>
+    <div class="sw"><div class="b" style="background:#dcdfd8"></div><div class="t"><div class="nm">Borde</div><div class="hx">#dcdfd8 <span class="d">/ #2c312a</span></div></div></div>
+  </div>
+
+  <div class="found-grid" style="margin-top:22px">
+    <div class="panel">
+      <span class="cap">Tipografía</span>
+      <h3>Dos familias, un sistema</h3>
+      <div style="margin-top:12px">
+        <div class="typerow"><span class="lab">mono · datos</span><span class="scale-mono" style="font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)">Etiqueta / label</span></div>
+        <div class="typerow"><span class="lab">mono · dato</span><span class="scale-mono" style="font-weight:700">2 / 7 · 85kg · 14 jul</span></div>
+        <div class="typerow"><span class="lab">sans · título</span><span class="scale-sans" style="font-size:1.25rem;font-weight:700;letter-spacing:-.01em">Conseguir 1 cliente</span></div>
+        <div class="typerow"><span class="lab">sans · cuerpo</span><span class="scale-sans" style="font-size:.95rem;color:var(--ink-soft)">Texto de interfaz y prosa corta.</span></div>
+      </div>
+      <p style="margin-top:12px;color:var(--ink-soft);font-size:.85rem"><b>Mono</b> (Cascadia/Consolas) = chrome del OS, etiquetas, números, la identidad "markdown". <b>Sans</b> del sistema = títulos y texto de UI. Sin fuentes externas (la CSP las bloquea).</p>
+    </div>
+    <div class="panel">
+      <span class="cap">Forma y espacio</span>
+      <h3>Radios y elevación</h3>
+      <div class="radii">
+        <div><div class="r1"></div><span>5 · chip</span></div>
+        <div><div class="r2"></div><span>8 · botón</span></div>
+        <div><div class="r3"></div><span>11 · tarjeta</span></div>
+        <div><div class="r4"></div><span>28 · sheet</span></div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="tokline"><span>Espaciado base</span><span class="v">4 · 8 · 12 · 15 px</span></div>
+        <div class="tokline"><span>Objetivo táctil</span><span class="v">≥ 40 px</span></div>
+        <div class="tokline"><span>Elevación</span><span class="v">1 sombra sutil, sin glow</span></div>
+        <div class="tokline"><span>Bordes</span><span class="v">1px, hairline</span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- COMPONENTES -->
+<section id="comp" style="background:var(--surface-2)"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">02 · Componentes</span><h2>La biblioteca</h2>
+    <p>Cada pieza renderizada como se ve en la app, con su estado y su regla de uso. Los estados usan color con significado: verde = hecho, rojo = actual/alerta, ámbar = estancado.</p></div>
+
+  <div class="kit">
+
+    <article class="comp"><div class="ch"><span class="nm">Barra superior</span><span class="tg">chrome</span></div>
+      <div class="canvas"><div class="a-bar"><span class="m">hdx_os<span class="c">▍</span></span><span class="dt">mar · 14 jul</span></div></div>
+      <div class="note">Identidad tipo terminal. La fecha a la derecha. En vistas internas se reemplaza por <code>‹ Home</code> + título.</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Saludo</span><span class="tg">home</span></div>
+      <div class="canvas"><div class="a-greet">Buenos días, Hendrix<span class="s">2 planes vivos · racha 6 días</span></div></div>
+      <div class="note">Encabezado personal del Home (idea de Rowan). El subtítulo resume el estado en una línea.</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Botones de acción</span><span class="tg">acción</span></div>
+      <div class="canvas"><div class="a-btns"><button class="a-btn pri">+ Nuevo día</button><button class="a-btn">+ idea</button><button class="a-btn">+ persona</button></div></div>
+      <div class="note"><b>Primario</b> (relleno rojo) = la acción del ritual. <b>Secundarios</b> = captura rápida. Máx. 1 primario por pantalla.</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Etiqueta de sección</span><span class="tg">chrome</span></div>
+      <div class="canvas"><span class="a-lbl">Hoy · paso actual de cada plan</span></div>
+      <div class="note">Mono, mayúsculas, tracking amplio. Separa zonas sin líneas ni cajas.</div>
+    </article>
+
+    <article class="comp w2"><div class="ch"><span class="nm">Tarjeta Make Time</span><span class="tg">home · ritual</span></div>
+      <div class="canvas"><div class="a-card a-mt">
+        <div class="r"><span class="k">Highlight</span><span class="v">Lista de 20 prospectos</span></div>
+        <div class="r"><span class="k">Gratitud</span><span class="v ph">escribir…</span></div>
+        <div class="r"><span class="k">Let go</span><span class="v ph">escribir…</span></div>
+        <div class="a-mood" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--app-border)"><span class="k">Ánimo</span><span class="a-dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></div>
+      </div></div>
+      <div class="note">El núcleo del ritual: 3 campos que se escriben + el selector de ánimo 1-10 (el dato subjetivo que calibra los patrones).</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Selector de ánimo</span><span class="tg">input</span></div>
+      <div class="canvas"><div class="a-mood"><span class="k">Ánimo</span><span class="a-dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></div></div>
+      <div class="note">10 puntos, un toque. Nunca pide más (ni texto ni escala). Si costara, se abandona.</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Tile de plan</span><span class="tg">home</span></div>
+      <div class="canvas"><button class="a-tile"><div class="tt">Conseguir 1 cliente</div><div class="pb"><i style="width:28%"></i></div><div class="st">2/7 · agencia</div><div class="nx">→ Lista de 20 prospectos</div></button></div>
+      <div class="note">Un plan = un tile (estructura de Rowan). Muestra avance + paso actual. Toque → abre el plan.</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Tile · estancado</span><span class="tg">estado</span></div>
+      <div class="canvas"><button class="a-tile warn"><div class="tt">Aprobar el semestre</div><div class="pb"><i style="width:33%"></i></div><div class="st">estancado 11 d</div><div class="nx">→ Síntesis del caso Y</div></button></div>
+      <div class="note">Borde y barra en ámbar cuando el paso actual no cambia en 10+ días. Atrapa planes abandonados.</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Barra de progreso</span><span class="tg">dato</span></div>
+      <div class="canvas"><div class="a-prog"><i style="width:28.5%"></i></div></div>
+      <div class="note">Avance de un plan. Sin números encima salvo en la vista de plan (<code>2/7</code>).</div>
+    </article>
+
+    <article class="comp w2"><div class="ch"><span class="nm">Fila de paso · estados</span><span class="tg">plan</span></div>
+      <div class="canvas">
+        <div class="a-step done"><span class="a-cb on"></span><span class="sx">2. Portafolio de 3 ejemplos</span></div>
+        <div class="a-step now"><span class="a-cb now"></span><span class="sx">3. Lista de 20 prospectos</span></div>
+        <div class="a-step"><span class="a-cb"></span><span class="sx">4. Mensaje de acercamiento</span></div>
+      </div>
+      <div class="note">Tres estados: <b>hecho</b> (verde, tachado), <b>actual</b> (borde rojo, negrita), <b>pendiente</b>. En v1 se palomea en Obsidian.</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Racha de hábito</span><span class="tg">home</span></div>
+      <div class="canvas"><div class="a-hab">Gym<span class="a-sq"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div><div class="a-hab">Leer<span class="a-sq"><i class="on"></i><i></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i></i></span></div></div>
+      <div class="note">7 días, booleano. Verde = hecho. La racha más valiosa es la del propio ritual.</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Tira del mentor</span><span class="tg">home</span></div>
+      <div class="canvas"><div class="a-mentor"><span class="ic">✳</span><span class="tx">Pregúntale a tu vida — Claude Code lee el vault</span></div></div>
+      <div class="note">El "mentor" de Rowan, pero es Claude Code leyendo el vault. En v1 es un puntero; en v3, chat/patrón semanal.</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Chips de área</span><span class="tg">home</span></div>
+      <div class="canvas"><div class="a-chips"><span class="a-chip">Estudio</span><span class="a-chip">Personal</span><span class="a-chip">Agencia</span><span class="a-chip">Sistema</span></div></div>
+      <div class="note">Puertas a los hubs del vault. No son estructura — la enlazan.</div>
+    </article>
+
+    <article class="comp w2"><div class="ch"><span class="nm">Captura · campo + voz</span><span class="tg">captura</span></div>
+      <div class="canvas">
+        <div class="a-field">¿Qué tienes en mente?</div>
+        <div class="a-microw" style="margin-top:10px"><button class="a-mic" aria-label="Dictar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/></svg></button><div class="a-wave"><i style="height:6px"></i><i style="height:14px"></i><i style="height:20px"></i><i style="height:10px"></i><i style="height:16px"></i><i style="height:6px"></i></div></div>
+      </div>
+      <div class="note">Texto o voz (mic del teclado del móvil). Cae al inbox; Claude Code lo rutea al vault.</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Chips de tipo</span><span class="tg">captura</span></div>
+      <div class="canvas"><div class="a-tc"><span class="sel">idea</span><span>tarea</span><span>persona</span><span>video</span></div></div>
+      <div class="note">Etiqueta opcional de la captura. Seleccionado = relleno; resto = borde punteado.</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Control segmentado</span><span class="tg">nav</span></div>
+      <div class="canvas"><div class="a-seg"><b class="sel">Home</b><b>Plan</b><b>Captura</b></div></div>
+      <div class="note">Cambio de vista sin perder contexto. Máx. 3-4 opciones.</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Botón de guardar</span><span class="tg">acción</span></div>
+      <div class="canvas"><button class="a-save">Guardar en el inbox</button></div>
+      <div class="note">Acción de confirmación en tinta oscura (no roja): cierra el flujo y vuelve al Home.</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Nota / callout</span><span class="tg">apoyo</span></div>
+      <div class="canvas"><div class="a-note">Se palomea en Obsidian (Fase A). Marcar desde la app → v2.</div></div>
+      <div class="note">Aclaraciones de contexto. Nunca roja — la usamos para explicar, no para alertar.</div>
+    </article>
+
+    <article class="comp"><div class="ch"><span class="nm">Estado vacío</span><span class="tg">estado</span></div>
+      <div class="canvas"><div class="a-empty"><span class="big">◇</span>Aún no tienes planes.<br>Escribe uno en Obsidian con <code style="font-family:var(--mono)">## Pasos</code>.</div></div>
+      <div class="note">Todo estado vacío enseña el siguiente paso. Nunca una pantalla en blanco.</div>
+    </article>
+
+  </div>
+</div></section>
+
+<!-- PATRONES UX -->
+<section id="ux"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">03 · Patrones de UX</span><h2>Cómo se comporta</h2>
+    <p>Las reglas de interacción — más importantes que los píxeles. Definen por qué la app se siente ligera aunque haga varias cosas.</p></div>
+
+  <div class="ux-grid">
+    <div class="ux">
+      <span class="cap">Navegación</span>
+      <h3>Home es el centro. Nada es un callejón.</h3>
+      <div class="navmap"><b>HOME</b> ◄──────────────┐
+  │  (abrir encima)   │ back
+  ▼                   │
+[Plan] · [Captura] · [Área]
+</div>
+      <p>Una sola pantalla; el resto se abre encima y el "back" siempre vuelve al Home. Profundidad máxima: <b>2 toques</b>.</p>
+    </div>
+
+    <div class="ux">
+      <span class="cap">Ritmo</span>
+      <h3>Mañana guiada · día libre</h3>
+      <p>La <b>mañana</b> es una secuencia lineal (Nuevo día → 3 campos → Hoy), como un mini-onboarding diario que mata la parálisis.</p>
+      <p>El <b>resto del día</b> es navegación libre: entras 10 segundos, capturas, sales. No se mezclan los dos modos.</p>
+    </div>
+
+    <div class="ux">
+      <span class="cap">Color con significado</span>
+      <h3>Semántica, no decoración</h3>
+      <div class="legend">
+        <div class="lg"><span class="dot" style="background:var(--app-done)"></span> Verde — hecho / en meta</div>
+        <div class="lg"><span class="dot" style="background:var(--app-accent)"></span> Rojo tinta — paso actual · acento · alerta suave</div>
+        <div class="lg"><span class="dot" style="background:var(--app-warn)"></span> Ámbar — estancado / se acerca un deadline</div>
+        <div class="lg"><span class="dot" style="background:var(--app-faint)"></span> Tinta suave — pendiente / inactivo</div>
+      </div>
+      <p>El rojo parpadeante de Rowan, pero contenido: se reserva para "esto pide tu atención".</p>
+    </div>
+
+    <div class="ux">
+      <span class="cap">Entrada y captura</span>
+      <h3>Cuatro puertas</h3>
+      <ul>
+        <li><b>Ícono PWA</b> → abre el Home</li>
+        <li><b>Notificación 7am</b> → abre directo al ritual</li>
+        <li><b>Share Target</b> → cae al inbox sin abrir la app</li>
+        <li><b>Mic del teclado</b> → dictar dentro de Captura</li>
+      </ul>
+      <p>Objetivos táctiles ≥ 40px; todo lo importante al alcance del pulgar (mitad inferior).</p>
+    </div>
+  </div>
+
+  <div style="margin-top:22px">
+    <div class="dodont">
+      <div class="dd do">
+        <div class="h">✓ Sí</div>
+        <ul>
+          <li>Piel de papel; el mono <b>es</b> el markdown.</li>
+          <li>Un solo acento (rojo tinta) + semánticos.</li>
+          <li>Sparklines/rachas <b>solo</b> donde hay número real (ánimo, hábitos).</li>
+          <li>Transiciones sutiles; respeta <code>reduced-motion</code>.</li>
+          <li>Todo estado vacío enseña el siguiente paso.</li>
+        </ul>
+      </div>
+      <div class="dd dont">
+        <div class="h">✕ No</div>
+        <ul>
+          <li>Dark-neón, gauges, mascota 3D (es la estética de números de Rowan).</li>
+          <li>Sparklines decorativos sobre prosa.</li>
+          <li>Menús profundos o pestañas fijas abajo.</li>
+          <li>Más de un botón primario por pantalla.</li>
+          <li>Rojo para cosas que no piden atención.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- FLUJOS -->
+<section id="flujos" style="background:var(--surface-2)"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">04 · Flujos</span><h2>Los recorridos, como secuencia</h2>
+    <p>Cada flujo paso a paso. Desliza a los lados si no cabe. La regla que los rige: cero callejones — todo vuelve al Home.</p></div>
+
+  <div class="flows">
+
+    <!-- FLUJO 1 -->
+    <div class="flow-block">
+      <div class="flow-head"><span class="n">Flujo 1 · El ritual matutino</span><span class="d">lo primero, cada mañana</span><span class="badge">guiado · lineal</span></div>
+      <div class="flow-seq">
+        <div class="fstep"><div class="fn">01</div><div class="ft">Abrir</div><div class="fs">ícono PWA o la notificación de las 7am</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep pri"><div class="fn">02</div><div class="ft">+ Nuevo día</div><div class="fs">genera la nota del día: rutina fija + paso de cada plan</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep"><div class="fn">03</div><div class="ft">Escribir</div><div class="fs">Highlight → Gratitud → Let-go → ánimo 1-10</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep end"><div class="fn">04</div><div class="ft">Ver el Hoy</div><div class="fs">qué sigue en cada plan, cruzado. Fin del ritual.</div></div>
+      </div>
+    </div>
+
+    <!-- FLUJO 2 -->
+    <div class="flow-block">
+      <div class="flow-head"><span class="n">Flujo 2 · Capturar algo</span><span class="d">a cualquier hora del día</span><span class="badge">libre</span></div>
+      <div class="flow-seq">
+        <div class="fstep"><div class="fn">01</div><div class="ft">Se te ocurre algo</div><div class="fs">estás en el Home… o en otra app</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep"><div class="fn">02</div><div class="ft">+ idea / Share</div><div class="fs">abre la captura, o comparte un link desde otra app</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep"><div class="fn">03</div><div class="ft">Dictar o escribir</div><div class="fs">mic del teclado o texto; etiqueta opcional</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep end"><div class="fn">04</div><div class="ft">Guardar</div><div class="fs">vuelve al Home. Sigues con lo tuyo.</div></div>
+      </div>
+      <div class="flow-behind"><b>por detrás:</b> cae al <b>inbox</b> (Sheet) → Claude Code lo drena → lo rutea a la página correcta del vault con su <code>[[wikilink]]</code></div>
+    </div>
+
+    <!-- FLUJO 3 -->
+    <div class="flow-block">
+      <div class="flow-head"><span class="n">Flujo 3 · Avanzar un plan</span><span class="d">cuando trabajas en un objetivo</span><span class="badge">libre</span></div>
+      <div class="flow-seq">
+        <div class="fstep"><div class="fn">01</div><div class="ft">Home</div><div class="fs">ves el tile del plan con su paso actual</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep"><div class="fn">02</div><div class="ft">Tocar el tile</div><div class="fs">se abre el plan encima</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep"><div class="fn">03</div><div class="ft">Ver los pasos</div><div class="fs">los 7, con el actual resaltado en rojo</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep"><div class="fn">04</div><div class="ft">Palomear</div><div class="fs">en Obsidian (v1) · desde la app (v2)</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep end"><div class="fn">05</div><div class="ft">Volver</div><div class="fs">el tile avanza al siguiente paso</div></div>
+      </div>
+    </div>
+
+    <!-- FLUJO 4 -->
+    <div class="flow-block">
+      <div class="flow-head"><span class="n">Flujo 4 · El bucle diario</span><span class="d">el ciclo completo</span><span class="badge">ciclo</span></div>
+      <div class="flow-seq">
+        <div class="fstep pri"><div class="fn">◷ am</div><div class="ft">Mañana</div><div class="fs">el ritual (Flujo 1)</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep"><div class="fn">☀ día</div><div class="ft">Día</div><div class="fs">capturar y avanzar planes (Flujos 2 y 3)</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep"><div class="fn">☾ pm</div><div class="ft">Noche</div><div class="fs">mirada rápida; lo no hecho → push a mañana</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12H5M11 6l-6 6 6 6"/></svg></div>
+        <div class="fstep end"><div class="fn">↺</div><div class="ft">Reinicia</div><div class="fs">al día siguiente arranca de nuevo por la mañana</div></div>
+      </div>
+      <div class="cycle-note">↺ el "push a mañana" alimenta el "Nuevo día" del día siguiente — el ciclo se cierra solo.</div>
+    </div>
+
+    <!-- FLUJO 5 -->
+    <div class="flow-block">
+      <div class="flow-head"><span class="n">Flujo 5 · Los datos</span><span class="d">lo que nunca ves</span><span class="badge">detrás</span></div>
+      <div class="flow-seq">
+        <div class="fstep"><div class="fn">A · leer</div><div class="ft">Vault</div><div class="fs">la verdad: planes, áreas, diario</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep"><div class="fn">A</div><div class="ft">Claude Code</div><div class="fs">parsea los planes → pestaña <code>planes</code></div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep end"><div class="fn">A</div><div class="ft">App lee → Home</div><div class="fs">tiles y "Hoy"</div></div>
+        <div class="farrow" style="opacity:.35"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="1.4"/><circle cx="6" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/></svg></div>
+        <div class="fstep"><div class="fn">B · escribir</div><div class="ft">App → buzón</div><div class="fs">captura y casillas → <code>inbox</code> / <code>dia</code></div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="fstep end"><div class="fn">B</div><div class="ft">Claude Code → Vault</div><div class="fs">drena y escribe el markdown (único escritor)</div></div>
+      </div>
+      <div class="flow-behind"><b>regla de oro:</b> la app lee del vault y escribe al buzón; <b>solo Claude Code escribe el vault</b> → cero conflictos de git a las 7am</div>
+    </div>
+
+  </div>
+</div></section>
+
+<footer>hdx_os · ui-kit · piel de papel · claro + oscuro · fuente de verdad para el build</footer>
+
+<script>
+  (function(){
+    if(!('IntersectionObserver' in window)) return;
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.style.opacity=1;e.target.style.transform='none';io.unobserve(e.target);}});},{threshold:.08,rootMargin:'0px 0px -5% 0px'});
+    document.querySelectorAll('.comp, .ux, .panel, .sw').forEach(function(el){
+      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      el.style.opacity=0;el.style.transform='translateY(14px)';el.style.transition='opacity .5s ease, transform .5s ease';
+      io.observe(el);
+    });
+  })();
+</script>

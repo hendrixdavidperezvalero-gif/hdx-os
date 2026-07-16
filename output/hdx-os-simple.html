@@ -1,0 +1,194 @@
+<title>HDX OS — cómo funciona, en simple</title>
+<style>
+  :root{
+    --bg:#f4f5f2; --surface:#ffffff; --ink:#1a1d19; --ink-soft:#565c52; --ink-faint:#8a9082;
+    --border:#dcdfd8; --border-strong:#c7ccbe; --accent:#a82c29; --accent-soft:#a82c290f;
+    --good:#5c7a58;
+    --shadow:0 1px 2px rgba(26,29,25,.05),0 14px 34px -18px rgba(26,29,25,.22);
+    --mono:'Cascadia Code',ui-monospace,'Segoe UI Mono',Consolas,monospace;
+    --sans:system-ui,'Segoe UI',-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#12140f;--surface:#1c1f18;--ink:#eceee6;--ink-soft:#a8ae9f;--ink-faint:#747a6c;
+      --border:#2c3027;--border-strong:#3d4337;--accent:#e2564f;--accent-soft:#e2564f14;--good:#7fa578;
+      --shadow:0 1px 2px rgba(0,0,0,.5),0 16px 40px -20px rgba(0,0,0,.75);}
+  }
+  :root[data-theme="light"]{--bg:#f4f5f2;--surface:#ffffff;--ink:#1a1d19;--ink-soft:#565c52;--ink-faint:#8a9082;
+    --border:#dcdfd8;--border-strong:#c7ccbe;--accent:#a82c29;--accent-soft:#a82c290f;--good:#5c7a58;
+    --shadow:0 1px 2px rgba(26,29,25,.05),0 14px 34px -18px rgba(26,29,25,.22);}
+  :root[data-theme="dark"]{--bg:#12140f;--surface:#1c1f18;--ink:#eceee6;--ink-soft:#a8ae9f;--ink-faint:#747a6c;
+    --border:#2c3027;--border-strong:#3d4337;--accent:#e2564f;--accent-soft:#e2564f14;--good:#7fa578;
+    --shadow:0 1px 2px rgba(0,0,0,.5),0 16px 40px -20px rgba(0,0,0,.75);}
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:820px;margin:0 auto;padding:clamp(36px,7vw,72px) clamp(20px,5vw,32px)}
+  h1,h2,h3{margin:0;line-height:1.15;text-wrap:balance}
+  p{margin:0}
+
+  .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-size:clamp(1.9rem,5vw,3rem);font-weight:800;letter-spacing:-.02em;margin-top:16px}
+  .lede{margin-top:20px;font-size:clamp(1.1rem,2.2vw,1.4rem);color:var(--ink-soft);max-width:32ch}
+  .lede b{color:var(--ink)}
+
+  .divider{height:1px;background:var(--border-strong);margin:clamp(40px,7vw,68px) 0}
+  .step-label{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:20px}
+
+  /* the 3 pieces */
+  .pieces{display:flex;flex-direction:column;gap:16px}
+  .piece{display:grid;grid-template-columns:56px 1fr;gap:18px;align-items:start;
+    background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+  .piece .ic{width:56px;height:56px;border-radius:14px;background:var(--accent-soft);color:var(--accent);
+    display:grid;place-items:center}
+  .piece .ic svg{width:28px;height:28px}
+  .piece h3{font-size:1.3rem;font-weight:750}
+  .piece .who{font-family:var(--mono);font-size:.74rem;color:var(--accent);margin-top:2px}
+  .piece p{margin-top:10px;color:var(--ink-soft);font-size:1.02rem}
+  .piece p b{color:var(--ink)}
+
+  /* the loop */
+  .loop{display:grid;grid-template-columns:1fr;gap:12px}
+  .lp{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:16px 20px;box-shadow:var(--shadow)}
+  .lp .n{font-family:var(--mono);font-weight:700;color:var(--accent);font-size:1.1rem;flex:none;width:26px}
+  .lp .t{font-size:1.05rem}
+  .lp .t b{font-weight:700}
+  .lp .t span{color:var(--ink-soft);display:block;font-size:.92rem;margin-top:2px}
+  .loopback{display:flex;align-items:center;gap:10px;justify-content:center;color:var(--accent);
+    font-family:var(--mono);font-size:.82rem;padding:6px}
+  .loopback svg{width:20px;height:20px}
+
+  /* tu día */
+  .day{display:flex;flex-direction:column;gap:14px}
+  .moment{display:grid;grid-template-columns:52px 1fr;gap:18px;align-items:start}
+  .moment .m-ic{width:52px;height:52px;border-radius:50%;background:var(--surface);border:1px solid var(--border);
+    display:grid;place-items:center;box-shadow:var(--shadow)}
+  .moment .m-ic svg{width:24px;height:24px;color:var(--accent)}
+  .moment h3{font-size:1.12rem;font-weight:750}
+  .moment p{margin-top:5px;color:var(--ink-soft);font-size:1rem}
+  .moment p b{color:var(--ink)}
+
+  /* quién hace qué */
+  .roles{border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}
+  .role{display:grid;grid-template-columns:130px 1fr;gap:16px;padding:18px 22px;border-top:1px solid var(--border);align-items:baseline}
+  .role:first-child{border-top:none}
+  .role .who{font-weight:750;font-size:1.02rem}
+  .role .who .sub{display:block;font-family:var(--mono);font-size:.7rem;color:var(--ink-faint);font-weight:400;margin-top:2px}
+  .role .what{color:var(--ink-soft);font-size:.98rem}
+  .role.you{background:var(--accent-soft)}
+
+  .closer{text-align:center;font-size:1.15rem;color:var(--ink-soft);max-width:34ch;margin:0 auto}
+  .closer b{color:var(--ink)}
+  footer{text-align:center;font-family:var(--mono);font-size:.72rem;color:var(--ink-faint);margin-top:44px}
+  @media(max-width:520px){
+    .role{grid-template-columns:1fr;gap:5px}
+  }
+</style>
+
+<div class="wrap">
+
+  <span class="eyebrow">HDX OS · en simple</span>
+  <h1>Cómo funciona, sin enredos.</h1>
+  <p class="lede">Escribes tus planes <b>una vez</b>. La app te recuerda <b>qué sigue</b>, cada mañana. Eso es todo.</p>
+
+  <div class="divider"></div>
+
+  <div class="step-label">Solo hay 3 piezas</div>
+  <div class="pieces">
+
+    <div class="piece">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5"/><path d="M8 12h8M8 16h5"/></svg></span>
+      <div>
+        <h3>Tu cuaderno</h3>
+        <div class="who">= Obsidian (el vault)</div>
+        <p>Donde escribes tus planes y tus notas, con calma, cuando quieras. Es tu <b>memoria</b>. Todo lo importante vive aquí.</p>
+      </div>
+    </div>
+
+    <div class="piece">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg></span>
+      <div>
+        <h3>La app</h3>
+        <div class="who">= la cara, en tu teléfono</div>
+        <p>Cada mañana te muestra <b>qué toca hoy</b>, leyendo tu cuaderno. No guarda nada por su cuenta: solo te lo muestra bonito y a mano.</p>
+      </div>
+    </div>
+
+    <div class="piece">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg></span>
+      <div>
+        <h3>El ayudante</h3>
+        <div class="who">= Claude Code (yo)</div>
+        <p>De fondo, muevo las cosas de un lado a otro: cuando capturas algo en la app, yo lo <b>guardo en tu cuaderno</b> en el lugar correcto. No me ves, pero hago que encaje.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="step-label">Cómo se conectan (el círculo)</div>
+  <div class="loop">
+    <div class="lp"><span class="n">1</span><span class="t"><b>Tú escribes</b> un plan en tu cuaderno<span>ej: "conseguir 1 cliente", con sus pasos</span></span></div>
+    <div class="lp"><span class="n">2</span><span class="t"><b>La app te lo muestra</b> en el teléfono<span>y te dice cuál es el paso de hoy</span></span></div>
+    <div class="lp"><span class="n">3</span><span class="t"><b>Se te ocurre algo</b> y lo capturas en la app<span>una idea, un recado, un video</span></span></div>
+    <div class="lp"><span class="n">4</span><span class="t"><b>Yo lo guardo</b> de vuelta en tu cuaderno<span>en su sitio, listo para mañana</span></span></div>
+    <div class="loopback">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4"/></svg>
+      y vuelve a empezar
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="step-label">Tu día con la app</div>
+  <div class="day">
+    <div class="moment">
+      <span class="m-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg></span>
+      <div>
+        <h3>En la mañana</h3>
+        <p>Abres la app, escribes <b>3 cositas</b> (qué es lo importante hoy · algo que agradeces · algo que sueltas) y ves <b>qué sigue</b> en cada plan.</p>
+      </div>
+    </div>
+    <div class="moment">
+      <span class="m-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M18 11a6 6 0 0 1-12 0M12 17v4"/></svg></span>
+      <div>
+        <h3>Durante el día</h3>
+        <p>Se te ocurre algo → lo <b>dictas o escribes</b> en la app en 2 segundos → sigues con tu vida. Yo lo archivo después.</p>
+      </div>
+    </div>
+    <div class="moment">
+      <span class="m-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.2 6.2 0 0 0 10.5 10.5z"/></svg></span>
+      <div>
+        <h3>Y ya</h3>
+        <p>Lo que <b>no</b> hiciste hoy pasa a mañana <b>solo</b>. No tienes que reorganizar nada.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="step-label">¿Quién hace qué? (para que no te agobies)</div>
+  <div class="roles">
+    <div class="role you">
+      <div class="who">Tú<span class="sub">lo mínimo</span></div>
+      <div class="what">Escribes tus planes (cuando quieras) y las 3 cositas de la mañana. Nada más.</div>
+    </div>
+    <div class="role">
+      <div class="who">La app<span class="sub">automático</span></div>
+      <div class="what">Te muestra qué toca hoy y recibe tus capturas. No le tienes que "dar mantenimiento".</div>
+    </div>
+    <div class="role">
+      <div class="who">Yo<span class="sub">automático</span></div>
+      <div class="what">Ordeno todo por detrás: guardo tus capturas, mantengo los planes al día, resumo tus videos.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <p class="closer">Escribes en tu cuaderno. La app te lo recuerda. <b>Yo mantengo todo ordenado.</b> Eso es el HDX OS.</p>
+
+  <footer>hdx_os · la versión de 30 segundos</footer>
+
+</div>

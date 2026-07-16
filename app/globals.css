@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+/* ===== HDX OS — design tokens (piel de papel) ===== */
+:root {
+  --c-paper:#f8f9f6; --c-surface:#ffffff; --c-surface2:#eceee9; --c-panel:#181b17;
+  --c-ink:#181b18; --c-ink-soft:#535a51; --c-ink-faint:#6b7268;
+  --c-line:#e4e7e0; --c-line2:#c2c7bd;
+  --c-accent:#a82c29; --c-accent-soft:#a82c290f; --c-accent-ink:#ffffff;
+  --c-good:#5c7a58; --c-good-ink:#ffffff;
+  --c-warn:#b07d16; --c-warn-soft:#b07d1614;
+  --c-divider:#eceee9;
+  --c-panel-ink:#f8f9f6;
+  --shadow-card:0 1px 3px rgba(24,27,24,.05);
+  --shadow-screen:0 2px 14px rgba(24,27,24,.07);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-paper:#181b17; --c-surface:#20241e; --c-surface2:#262b23; --c-panel:#0b0d0a;
+    --c-ink:#e9ebe6; --c-ink-soft:#a6ada2; --c-ink-faint:#868d83;
+    --c-line:#2c312a; --c-line2:#3d443b;
+    --c-accent:#e2564f; --c-accent-soft:#e2564f14; --c-accent-ink:#181b17;
+    --c-good:#7fa578; --c-good-ink:#181b17;
+    --c-warn:#e6b64c; --c-warn-soft:#e6b64c14;
+    --c-divider:#262b23;
+    --c-panel-ink:#e9ebe6;
+    --shadow-card:0 1px 3px rgba(0,0,0,.25);
+    --shadow-screen:0 2px 14px rgba(0,0,0,.35);
+  }
+}
+
+@theme inline {
+  --color-paper: var(--c-paper);
+  --color-surface: var(--c-surface);
+  --color-surface2: var(--c-surface2);
+  --color-panel: var(--c-panel);
+  --color-panel-ink: var(--c-panel-ink);
+  --color-ink: var(--c-ink);
+  --color-ink-soft: var(--c-ink-soft);
+  --color-ink-faint: var(--c-ink-faint);
+  --color-line: var(--c-line);
+  --color-line2: var(--c-line2);
+  --color-accent: var(--c-accent);
+  --color-accent-soft: var(--c-accent-soft);
+  --color-accent-ink: var(--c-accent-ink);
+  --color-good: var(--c-good);
+  --color-good-ink: var(--c-good-ink);
+  --color-warn: var(--c-warn);
+  --color-warn-soft: var(--c-warn-soft);
+  --color-divider: var(--c-divider);
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-jbmono), ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: var(--c-surface2);
+  color: var(--c-ink);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: contain;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; border-radius: 4px; }
+.tnum { font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after { transition: none !important; animation: none !important; }
+}
